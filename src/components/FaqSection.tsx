@@ -10,7 +10,7 @@ import {
 const faqs = [
   {
     question: "How does the free trial work?",
-    answer: "Our free trial gives you full access to all Sassland features for 14 days. No credit card required. At the end of the trial, you can choose a plan that suits your needs or cancel without any charges."
+    answer: "Our free trial gives you full access to all Promptify features for 14 days. No credit card required. At the end of the trial, you can choose a plan that suits your needs or cancel without any charges."
   },
   {
     question: "Can I change my plan later?",
@@ -43,7 +43,7 @@ const FaqSection = () => {
             Frequently Asked <span className="gradient-text">Questions</span>
           </h2>
           <p className="text-gray-400">
-            Find answers to common questions about Sassland. If you can't find what you're looking for, feel free to contact our support team.
+            Find answers to common questions about Promptify. If you can't find what you're looking for, feel free to contact our support team.
           </p>
         </div>
         

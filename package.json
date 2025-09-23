@@ -1,9 +1,9 @@
 {
-  "name": "sassland",
+  "name": "promptify",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://themewagon.github.io/saasland",
+  "homepage": "https://themewagon.github.io/promptify",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

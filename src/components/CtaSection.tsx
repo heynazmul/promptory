@@ -17,7 +17,7 @@ const CtaSection = () => {
                 Ready to transform your business?
               </h2>
               <p className="text-gray-300 mb-6 max-w-xl">
-                Join thousands of companies that are already streamlining their operations and growing their business with Sassland. Start your free trial today.
+                Join thousands of companies that are already streamlining their operations and growing their business with Promptify. Start your free trial today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="bg-saas-orange hover:bg-orange-600 text-white font-semibold">
