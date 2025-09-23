@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    target: "esnext",
+    minify: mode === "production" ? "esbuild" : false,
+    sourcemap: mode !== "production",
     rollupOptions: {
       output: {
         entryFileNames: 'assets/[name]-[hash].js',
@@ -26,7 +29,16 @@ export default defineConfig(({ mode }) => ({
           }
           return 'assets/[name]-[hash][extname]';
         },
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
+        },
       },
     },
+    chunkSizeWarningLimit: 1000,
+  },
+  esbuild: {
+    drop: mode === "production" ? ["console", "debugger"] : [],
   },
 }));

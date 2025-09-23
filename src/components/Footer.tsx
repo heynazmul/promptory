@@ -1,5 +1,3 @@
-import React from "react";
-import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -10,12 +8,12 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <a href="#" className="inline-block mb-4">
               <span className="text-2xl font-bold bg-gradient-to-r from-saas-orange to-amber-500 bg-clip-text text-transparent">
-                Sassland
+                Promptify
               </span>
             </a>
             <p className="text-gray-400 mb-4">
-              Transform your business with our cutting-edge SaaS solution
-              designed for modern companies.
+              Transform your thoughts into reality with our AI prompt collection platform.
+              Discover and share powerful prompts for better AI interactions.
             </p>
             <div className="flex space-x-4">
               <a
@@ -214,19 +212,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
           <p>
-            © {new Date().getFullYear()} Sassland. All rights reserved. Build by
-            Codescandy
-          </p>
-          <p>
-            Distributed by{" "}
-            <a
-              href="https://themewagon.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-saas-orange hover:underline"
-            >
-              ThemeWagon
-            </a>
+            © {new Date().getFullYear()} Promptify. All rights reserved.
           </p>
         </div>
       </div>

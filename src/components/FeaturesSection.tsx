@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Card } from './ui/card';
 import { useToast } from './ui/use-toast';
 
@@ -111,6 +111,25 @@ export default function FeaturesSection() {
   const [activeCategory, setActiveCategory] = useState<Category>('men');
   const { toast } = useToast();
 
+  const handleCopyPrompt = useCallback(async (product: Product) => {
+    try {
+      const text = `${product.title}\n${product.description}`;
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied to clipboard",
+        description: "The prompt has been copied to your clipboard.",
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('Failed to copy text: ', error);
+      toast({
+        title: "Copy failed",
+        description: "Unable to copy to clipboard. Please try again.",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
+
   return (
     <section className="min-h-screen py-14">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-saas-orange opacity-10 rounded-full blur-[100px]"></div>
@@ -149,8 +168,10 @@ export default function FeaturesSection() {
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img 
                   src={product.imageUrl}
-                  alt={product.title}
+                  alt={`${product.title} - AI prompt example`}
                   className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
@@ -160,16 +181,7 @@ export default function FeaturesSection() {
                     {activeCategory}
                   </div>
                   <button 
-                    onClick={() => {
-                      const text = `${product.title}\n${product.description}`;
-                      navigator.clipboard.writeText(text).then(() => {
-                        toast({
-                          title: "Copied to clipboard",
-                          description: "The prompt has been copied to your clipboard.",
-                          duration: 2000
-                        });
-                      });
-                    }}
+                    onClick={() => handleCopyPrompt(product)}
                     className="ml-auto p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors group/copy"
                     title="Copy prompt"
                   >

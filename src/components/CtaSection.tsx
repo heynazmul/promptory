@@ -1,45 +1,38 @@
-
-import React from 'react';
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const CtaSection = () => {
   return (
-    <div className="bg-saas-darkGray py-16 md:py-20">
-      <div className="section-container">
-        <div className="bg-gradient-to-r from-saas-orange/20 to-amber-600/20 rounded-2xl p-8 md:p-12 relative overflow-hidden">
-          {/* Abstract glow effect */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-saas-orange opacity-20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-600 opacity-10 rounded-full blur-3xl"></div>
-          
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="md:w-2/3">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to transform your business?
-              </h2>
-              <p className="text-gray-300 mb-6 max-w-xl">
-                Join thousands of companies that are already streamlining their operations and growing their business with Promptify. Start your free trial today.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="bg-saas-orange hover:bg-orange-600 text-white font-semibold">
-                  Start Free Trial
-                </Button>
-                <Button variant="outline" className="border-background text-white hover:bg-white hover:text-saas-black hover:border-white">
-                  Schedule Demo
-                </Button>
-              </div>
-            </div>
-            
-            <div className="md:w-1/3">
-              <img 
-                src="https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=300&h=300&q=80"
-                alt="Dashboard Preview"
-                className="rounded-lg w-full card-shadow"
-              />
-            </div>
-          </div>
+    <section className="py-20 bg-gradient-to-r from-orange-500 to-orange-600">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          Ready to Transform Your AI Interactions?
+        </h2>
+        <p className="text-xl mb-8 text-orange-100">
+          Join thousands of users who are already getting better results with our prompts.
+          Start your journey today!
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button 
+            size="lg" 
+            className="bg-white text-orange-600 hover:bg-orange-50 font-semibold"
+          >
+            Get Started Free
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-white text-white hover:bg-white hover:text-orange-600"
+          >
+            View Pricing
+          </Button>
         </div>
+        <p className="text-orange-100 text-sm mt-4">
+          No credit card required • Free forever plan available
+        </p>
       </div>
-    </div>
+    </section>
   );
 };
 

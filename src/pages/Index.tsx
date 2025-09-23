@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -16,10 +15,10 @@ const Index = () => {
         <HeroSection />
 
         <FeaturesSection />
-        {/* <PricingSection />
+        <PricingSection />
         <TestimonialsSection />
         <FaqSection />
-        <CtaSection /> */}
+        <CtaSection />
       </main>
       <Footer />
     </div>
