@@ -19,42 +19,42 @@ const products: Record<Category, Product[]> = {
       description: "Ultra-realistic cinematic photo using the exact same face from the uploaded reference image (keep 100% identical facial features and hairstyle). A stylish young man with curly hair and a trimmed beard, wearing a fitted black t-shirt, ripped black jeans, and black boots. He is leaning casually against a sleek black vintage muscle car parked on a winding mountain road. The background shows dramatic mountain silhouettes under a warm golden sunset sky. The mood is cinematic, moody, and atmospheric with soft golden-hour lighting. 4K, high detail.",
       rating: 4.8,
       reviews: 156,
-      imageUrl: "/promptify/images/men1.jpg"
+      imageUrl: "/images/men1.jpg"
     },
     {
       title: "Men's Portrait Session",
       description: "Create a retro vintage grainy but bright image of the reference picture but draped in a perfect white colour suit, Pinteresty aesthetic retro pants. It must feel like a 90s movie hair baddie with a small flower bouquet in hand and romanticising a windy environment. The man is standing against a solid deep shadow and contrast drama, creating a mysterious and artistic atmosphere where the lighting is warm with golden tones evoking a sunset or golden hour glow. The background is minimalist.",
       rating: 4.8,
       reviews: 156,
-      imageUrl: "/promptify/images/men2.jpg"
+      imageUrl: "/images/men2.jpg"
     },
     {
       title: "Men's Portrait Session",
       description: "A mysterious black-and-white cinematic portrait of a young slim body man in a long dark trench coat, surrounded by pigeons flying dramatically around him. Some pigeons fly very close to the camera, wings blurred in motion, others perch on his shoulder. His expression is serious and enigmatic, half of his face obscured by a pigeon in the foreground. Moody lighting with strong shadows and highlights, high-contrast monochrome film style, grainy analog texture, surreal mystical fashion",
       rating: 4.8,
       reviews: 156,
-      imageUrl: "/promptify/images/men3.jpg"
+      imageUrl: "/images/men3.jpg"
     },
     {
       title: "Men's Portrait Session",
       description: "Create a retro vintage grainy but bright image of the reference picture but draped in a perfect brown color Pinteresty. Wearing blue denim Levi's jeans, blue denim Levi's jacket with white sandow. It must feel like a 90s movie, short hair and romanticising environment. The man is standing against a solid wall with deep shadows and contrast drama, creating a mysterious and artistic atmosphere where the lighting is warm with golden tones evoking a sunset. Use the face from the uploaded reference image and preserve the same facial features — do not alter the face.",
       rating: 4.8,
       reviews: 156,
-      imageUrl: "/promptify/images/men4.jpg"
+      imageUrl: "/images/men4.jpg"
     },
     {
       title: "Men's Portrait Session",
       description: "Create a hyper-realistic cinematic lifestyle portrait entirely based on the uploaded reference photo, keeping the exact same face, hairstyle, and overall appearance with no alterations. A stylish young Indian man lounges confidently on a modern hanging wicker chair, dressed in a trendy all-white coord set with a casual T-shirt and open shirt, paired with colorful designer sneakers and a luxury wristwatch. His expression is cool and composed as he slightly leans back with a relaxed posture, wearing dark sunglasses that add charisma to his look. The setting is a minimal outdoor terrace with subtle decor, soft natural daylight, and a clean modern vibe. Captured in ultra-detailed 8K resolution with sharp textures, natural skin tones, realistic shadows, and a premium fashion editorial aesthetic.",
       rating: 4.8,
       reviews: 156,
-      imageUrl: "/promptify/images/men5.jpg"
+      imageUrl: "/images/men5.jpg"
     },
     {
       title: "Outdoor Adventure Shoot",
       description: "Fashion editorial cinematic portrait, blurred silhouettes trailing foreground, Man Fashionable Costume,glowing in dusky attic atmosphere. Shot on Sony A7R V + 135mm f/1.8 lens, bokeh-heavy shallow depth. Lighting: soft window light + haze diffusion, warm amber prism glow. Background: wooden beams, diffused matte glass with vertical stripes. Styling: , messy loose bun. Editorial mood: Dazed magazine dreamscape. Keywords: cinematic dusky tones, lens flare, 3:4, tonal haze, art direction",
       rating: 4.9,
       reviews: 142,
-      imageUrl: "/promptify/images/men6.jpg"
+      imageUrl: "/images/men6.jpg"
     }
   ],
   couple: [

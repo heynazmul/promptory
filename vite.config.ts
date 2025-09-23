@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 export default defineConfig(({ mode }) => ({
-  base: "/promptify/",
+  base: "/",
   server: {
     host: "::",
     port: 8080,
@@ -18,13 +18,13 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: 'index.js',
-        chunkFileNames: 'chunk-[name].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-            return 'index.css';
+            return 'assets/[name]-[hash].css';
           }
-          return 'asset-[name][extname]';
+          return 'assets/[name]-[hash][extname]';
         },
       },
     },
