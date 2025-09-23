@@ -1,4 +1,4 @@
-# Promptify – AI Prompt Collection Platform
+# Promptory – AI Prompt Collection Platform
 
 A modern React application built with Vite, TypeScript, and Tailwind CSS for sharing and discovering AI prompts.
 
@@ -25,7 +25,7 @@ A modern React application built with Vite, TypeScript, and Tailwind CSS for sha
 
 ```bash
 git clone <your-repo-url>
-cd promptify
+cd promptory
 ```
 
 2. Install dependencies
@@ -110,8 +110,8 @@ src/
 Create a `.env.local` file in the root directory:
 
 ```env
-VITE_APP_TITLE=Promptify
-VITE_APP_DESCRIPTION=Transform Your thought into a reality with Promptify
+VITE_APP_TITLE=Promptory
+VITE_APP_DESCRIPTION=Transform Your thought into a reality with Promptory
 ```
 
 ## Contributing

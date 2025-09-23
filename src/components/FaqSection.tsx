@@ -6,8 +6,8 @@ const FaqSection = () => {
 
   const faqs = [
     {
-      question: "What is Promptify?",
-      answer: "Promptify is a platform that provides high-quality AI prompts for various use cases. Our prompts are designed to help you get better results from AI models like ChatGPT, Claude, and others."
+      question: "What is Promptory?",
+      answer: "Promptory is a platform that provides high-quality AI prompts for various use cases. Our prompts are designed to help you get better results from AI models like ChatGPT, Claude, and others."
     },
     {
       question: "How do I use the prompts?",
@@ -39,7 +39,7 @@ const FaqSection = () => {
             Frequently Asked <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Questions</span>
           </h2>
           <p className="text-xl text-gray-300">
-            Everything you need to know about Promptify
+            Everything you need to know about Promptory
           </p>
         </div>
 

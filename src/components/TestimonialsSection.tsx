@@ -5,8 +5,8 @@ const TestimonialsSection = () => {
     {
       name: "Sarah Johnson",
       role: "Content Creator",
-      content: "Promptify has revolutionized how I create content. The prompts are incredibly detailed and help me generate exactly what I need.",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=64&h=64"
+      content: "Promptory has revolutionized how I create content. The prompts are incredibly detailed and help me generate exactly what I need.",
+      avatar: "https://plus.unsplash.com/premium_photo-1658527049634-15142565537a?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
       name: "Michael Chen",

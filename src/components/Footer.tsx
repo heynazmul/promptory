@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <a href="#" className="inline-block mb-4">
               <span className="text-2xl font-bold bg-gradient-to-r from-saas-orange to-amber-500 bg-clip-text text-transparent">
-                Promptify
+                Promptory
               </span>
             </a>
             <p className="text-gray-400 mb-4">
@@ -212,7 +212,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
           <p>
-            © {new Date().getFullYear()} Promptify. All rights reserved.
+            © {new Date().getFullYear()} Promptory. All rights reserved.
           </p>
         </div>
       </div>
