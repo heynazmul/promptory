@@ -1,12 +1,9 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, Loader2, Image as ImageIcon, User, User2 } from "lucide-react";
+import { Upload, Download, Loader2, Image as ImageIcon, User } from "lucide-react";
 
-// n8n webhook URL (uses Vite proxy in dev to avoid CORS)
-const WEBHOOK_PATH = "/api/webhook/118ec93b-9367-4c7f-af6c-2c9708d799a7";
-const WEBHOOK_URL = (import.meta as any).env?.DEV
-  ? WEBHOOK_PATH
-  : "https://n8n-unxypryv.ap-southeast-1.clawcloudrun.com/webhook/118ec93b-9367-4c7f-af6c-2c9708d799a7";
+// Direct n8n webhook URL
+const WEBHOOK_URL = "https://n8n-unxypryv.ap-southeast-1.clawcloudrun.com/webhook/118ec93b-9367-4c7f-af6c-2c9708d799a7";
 
 export default function TryOn() {
   const [clothingFile, setClothingFile] = useState<File | null>(null);
@@ -50,13 +47,15 @@ export default function TryOn() {
       });
 
           const payload = {
-            image: base64,
-            model: selectedModel
+            body: {
+              image: base64,
+              model: selectedModel
+            }
           };
 
       // Debug logging
       console.log("Sending to webhook:", WEBHOOK_URL);
-      console.log("Payload:", { image: `base64(${base64.length} chars)`, model: payload.model });
+      console.log("Payload:", { body: { image: `base64(${base64.length} chars)`, model: payload.body.model } });
 
       const res = await fetch(WEBHOOK_URL, { 
         method: "POST", 
@@ -65,7 +64,7 @@ export default function TryOn() {
           'Accept': 'application/json, image/*, */*',
         },
         body: JSON.stringify(payload),
-        // Let proxy handle CORS in dev; prod should be CORS-enabled on server
+        mode: 'cors'
       });
       
       console.log("Response status:", res.status);
@@ -95,40 +94,13 @@ export default function TryOn() {
         // JSON response (fallback)
         const data = await res.json();
         console.log("JSON response:", data);
-
-        // Try various common n8n shapes
-        const tryGet = (obj: any, path: string[]): any => {
-          return path.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
-        };
-
-        const candidates: Array<{ base64?: string; url?: string; mime?: string }> = [];
-
-        // Flat keys
-        if (data.image) candidates.push({ base64: data.image });
-        if (data.url) candidates.push({ url: data.url });
-        if (data.result) candidates.push({ base64: data.result });
-
-        // Common nested structures
-        const nestedOptions = [
-          { base64: tryGet(data, ["data", "image", "data"]), mime: tryGet(data, ["data", "image", "mimeType"]) },
-          { base64: tryGet(data, ["image", "data"]), mime: tryGet(data, ["image", "mimeType"]) },
-          { base64: tryGet(data, ["binary", "image", "data"]), mime: tryGet(data, ["binary", "image", "mimeType"]) },
-          { base64: tryGet(data, ["items", 0 as any, "binary", "image", "data"]), mime: tryGet(data, ["items", 0 as any, "binary", "image", "mimeType"]) },
-          { url: tryGet(data, ["data", "url"]) },
-        ];
-        nestedOptions.forEach(o => candidates.push(o));
-
-        // Pick the first valid candidate
-        const found = candidates.find(c => (c.base64 && typeof c.base64 === 'string') || (c.url && typeof c.url === 'string'));
-        if (found?.base64) {
-          const b64 = found.base64.trim();
-          const mime = found.mime || (b64.startsWith("/9j/") ? "image/jpeg" : "image/png");
-          setResultUrl(`data:${mime};base64,${b64}`);
-        } else if (found?.url) {
-          setResultUrl(found.url);
+        if (data.image) {
+          const mime = data.image.startsWith("/9j/") ? "image/jpeg" : "image/png";
+          setResultUrl(`data:${mime};base64,${data.image}`);
+        } else if (data.url) {
+          setResultUrl(data.url);
         } else {
-          const keys = Object.keys(data || {});
-          setError(`Webhook responded without image data. JSON keys: ${keys.join(', ')}`);
+          setError("Webhook responded without image data.");
         }
       } else {
         // Try to parse as base64 string or binary
@@ -175,7 +147,7 @@ export default function TryOn() {
             
             {/* Clothing Upload */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">Product Image Upload</label>
+              <label className="block text-sm font-medium text-gray-700 mb-3">Clothing Product Image</label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors group">
                 <input 
                   type="file" 
@@ -188,7 +160,7 @@ export default function TryOn() {
                   <div className="w-16 h-16 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center group-hover:bg-blue-50 transition-colors">
                     <Upload className="h-8 w-8 text-gray-400 group-hover:text-blue-500" />
                   </div>
-                  <p className="text-gray-600 mb-1 font-medium">Click to upload product image</p>
+                  <p className="text-gray-600 mb-1 font-medium">Click to upload clothing image</p>
                   <p className="text-sm text-gray-500">JPG or PNG files only</p>
                 </label>
               </div>
@@ -198,7 +170,7 @@ export default function TryOn() {
                   <div className="relative">
                     <img 
                       src={filePreview(clothingFile) as string} 
-                      alt="product preview" 
+                      alt="clothing preview" 
                       className="w-24 h-24 object-cover rounded-xl border-2 border-gray-200 shadow-sm" 
                     />
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -216,22 +188,32 @@ export default function TryOn() {
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">Model Selection</label>
               <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setSelectedModel('male')}
-                  className={`rounded-xl border-2 p-4 flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow ${selectedModel === 'male' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-blue-300'}`}
-                >
-                  <User className={`h-6 w-6 ${selectedModel === 'male' ? 'text-blue-600' : 'text-gray-500'}`} />
-                  <span className={`font-medium ${selectedModel === 'male' ? 'text-blue-700' : 'text-gray-700'}`}>Male</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedModel('female')}
-                  className={`rounded-xl border-2 p-4 flex items-center justify-center gap-3 transition-all shadow-sm hover:shadow ${selectedModel === 'female' ? 'border-pink-500 bg-pink-50' : 'border-gray-200 bg-white hover:border-pink-300'}`}
-                >
-                  <User2 className={`h-6 w-6 ${selectedModel === 'female' ? 'text-pink-600' : 'text-gray-500'}`} />
-                  <span className={`font-medium ${selectedModel === 'female' ? 'text-pink-700' : 'text-gray-700'}`}>Female</span>
-                </button>
+                {(["male", "female"] as const).map((option) => {
+                  const isSelected = selectedModel === option;
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setSelectedModel(option)}
+                      className={`relative rounded-2xl border-2 p-5 text-left transition-all shadow-sm hover:shadow-md focus:outline-none ${
+                        isSelected ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isSelected ? "bg-blue-100" : "bg-gray-100"}`}>
+                          <User className={`${isSelected ? "text-blue-600" : "text-gray-500"}`} />
+                        </div>
+                        <div>
+                          <div className="text-lg font-semibold capitalize text-gray-800">{option}</div>
+                          <div className="text-sm text-gray-500">Use {option} model</div>
+                        </div>
+                      </div>
+                      {isSelected && (
+                        <span className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs px-2 py-1 rounded-full shadow">Selected</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -264,7 +246,7 @@ export default function TryOn() {
                   <div className="w-32 h-32 mx-auto mb-6 bg-gray-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-200">
                     <ImageIcon className="h-16 w-16 text-gray-300" />
                   </div>
-                  <p className="text-lg font-medium">Your generated image will appear here.</p>
+                  <p className="text-lg font-medium">Your generated try-on image will appear here.</p>
                 </div>
               ) : (
                 <div className="w-full">
