@@ -103,15 +103,31 @@ export default function TryOn() {
           setError("Webhook responded without image data.");
         }
       } else {
-        // Try to parse as base64 string or binary
-        const text = await res.text();
-        console.log("Text response length:", text.length);
-        if (text && text.length > 100 && !text.startsWith('http')) {
-          // Likely base64 image data
-          const mime = text.startsWith("/9j/") ? "image/jpeg" : "image/png";
-          setResultUrl(`data:${mime};base64,${text}`);
-        } else {
-          setError(`Unexpected response format. Content-Type: ${contentType}, Length: ${text.length}`);
+        // Fallback: treat body as raw binary even if Content-Type is missing
+        try {
+          const buffer = await res.arrayBuffer();
+          const bytes = new Uint8Array(buffer);
+          console.log("Fallback binary length:", bytes.byteLength);
+          if (bytes.byteLength > 0) {
+            // Detect JPEG/PNG via magic numbers
+            const isJpeg = bytes[0] === 0xFF && bytes[1] === 0xD8;
+            const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
+            const guessedType = isJpeg ? "image/jpeg" : (isPng ? "image/png" : "application/octet-stream");
+            const blob = new Blob([bytes], { type: guessedType });
+            setResultUrl(URL.createObjectURL(blob));
+          } else {
+            // Try last resort: as text/base64
+            const text = await res.text();
+            if (text && text.length > 100 && !text.startsWith('http')) {
+              const mime = text.startsWith("/9j/") ? "image/jpeg" : "image/png";
+              setResultUrl(`data:${mime};base64,${text}`);
+            } else {
+              setError(`Unexpected response format. Content-Type: ${contentType || 'none'}`);
+            }
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback parse error:", fallbackErr);
+          setError("Unable to parse webhook response as image.");
         }
       }
     } catch (e: any) {
