@@ -34,36 +34,19 @@ export default function TryOn() {
     setError(null);
     setResultUrl(null);
     try {
-      // Convert file to base64 for n8n
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          // Remove data:image/...;base64, prefix
-          const base64Data = result.split(',')[1];
-          resolve(base64Data);
-        };
-        reader.readAsDataURL(clothingFile);
-      });
-
-          const payload = {
-            body: {
-              image: base64,
-              model: selectedModel
-            }
-          };
+      // Send multipart/form-data: raw file + model
+      const form = new FormData();
+      form.append('image', clothingFile);
+      form.append('model', selectedModel);
 
       // Debug logging
-      console.log("Sending to webhook:", WEBHOOK_URL);
-      console.log("Payload:", { body: { image: `base64(${base64.length} chars)`, model: payload.body.model } });
+      console.log("Sending to webhook (multipart):", WEBHOOK_URL);
+      console.log("Form fields:", Array.from(form.keys()));
 
-      const res = await fetch(WEBHOOK_URL, { 
-        method: "POST", 
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, image/*, */*',
-        },
-        body: JSON.stringify(payload),
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json, image/*, */*' },
+        body: form,
         mode: 'cors'
       });
       
