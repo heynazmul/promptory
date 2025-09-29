@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 function TypewriterPhrases() {
   const phrases = ["AI photos", "cinematic portraits", "product shots", "creative concepts"]; 
@@ -44,6 +45,12 @@ function TypewriterPhrases() {
 }
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const [heroPrompt, setHeroPrompt] = useState("");
+  const handleGenerateClick = () => {
+    const query = heroPrompt ? `?prompt=${encodeURIComponent(heroPrompt)}` : "";
+    navigate(`/try-on${query}`);
+  };
   return (
     <div className="relative bg-gradient-to-b from-saas-black to-[#1c160c] overflow-hidden min-h-[92vh] flex items-center">
       {/* Magic particles */}
@@ -76,11 +83,13 @@ const HeroSection = () => {
             <div className="glass polish-hover rounded-xl p-2 md:p-3 mb-5">
               <div className="flex items-center gap-2">
                 <input
+                  value={heroPrompt}
+                  onChange={(e) => setHeroPrompt(e.target.value)}
                   placeholder='Describe your photo idea (e.g. "sunset portrait with warm tones")'
                   className="flex-1 bg-transparent outline-none text-white placeholder:text-gray-400 px-3 py-3"
                 />
-                <Button className="relative shine bg-saas-orange hover:bg-orange-600 text-white font-semibold px-5">
-                  Generate
+                <Button onClick={handleGenerateClick} className="relative shine bg-saas-orange hover:bg-orange-600 text-white font-semibold px-5">
+                  Try On Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

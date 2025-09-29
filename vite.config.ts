@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     open: true,
+    proxy: {
+      "/api/webhook": {
+        target: "https://n8n-unxypryv.ap-southeast-1.clawcloudrun.com",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/webhook/, "/webhook"),
+      }
+    }
   },
   plugins: [react()],
   resolve: {
