@@ -12,6 +12,7 @@ export default function TryOn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const [resultFilename, setResultFilename] = useState<string | null>(null);
 
   const canGenerate = useMemo(() => !!clothingFile && !!selectedModel && !loading, [clothingFile, selectedModel, loading]);
 
@@ -23,7 +24,7 @@ export default function TryOn() {
     if (!resultUrl) return;
     const link = document.createElement('a');
     link.href = resultUrl;
-    link.download = `try-on-${selectedModel}-${Date.now()}.png`;
+    link.download = resultFilename || `try-on-${selectedModel}-${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -34,6 +35,7 @@ export default function TryOn() {
     setLoading(true);
     setError(null);
     setResultUrl(null);
+    setResultFilename(null);
 
     try {
       // Create FormData with field names matching n8n webhook
@@ -57,6 +59,11 @@ export default function TryOn() {
 
       console.log("✅ Response status:", res.status);
       const contentType = res.headers.get("content-type") || "";
+      const contentDisposition = res.headers.get("content-disposition") || "";
+      const filenameMatch = contentDisposition.match(/filename\s*=\s*"?([^";]+)"?/i);
+      if (filenameMatch && filenameMatch[1]) {
+        setResultFilename(filenameMatch[1]);
+      }
       console.log("📄 Content-Type:", contentType);
 
       if (!res.ok) {
