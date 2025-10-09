@@ -14,6 +14,48 @@ export default function TryOn() {
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [resultFilename, setResultFilename] = useState<string | null>(null);
 
+  function extractImageFromJson(anyJson: any): { url?: string; base64?: string } | null {
+    if (!anyJson) return null;
+
+    // Direct known fields
+    const directUrl = anyJson?.imageUrl || anyJson?.url || anyJson?.image || anyJson?.outputUrl;
+    if (typeof directUrl === 'string') return { url: directUrl };
+
+    const directB64 = anyJson?.base64 || anyJson?.imageBase64 || anyJson?.data;
+    if (typeof directB64 === 'string') return { base64: directB64 };
+
+    // OpenRouter/Gemini-like nested response
+    try {
+      const nestedUrl = anyJson?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+      if (typeof nestedUrl === 'string') return { url: nestedUrl };
+    } catch {
+      // ignore
+    }
+
+    // Heuristic search: find first string that looks like a data URL or image URL
+    const visited = new Set<any>();
+    const stack: any[] = [anyJson];
+    const dataUrlRegex = /^data:image\/(png|jpe?g|webp|gif);base64,/i;
+    const httpImgRegex = /^(https?:\/\/[^\s]+\.(png|jpe?g|webp|gif)(\?[^\s]*)?)$/i;
+
+    while (stack.length) {
+      const current = stack.pop();
+      if (!current || visited.has(current)) continue;
+      visited.add(current);
+
+      if (typeof current === 'string') {
+        if (dataUrlRegex.test(current)) return { url: current };
+        if (httpImgRegex.test(current)) return { url: current };
+      } else if (Array.isArray(current)) {
+        for (const item of current) stack.push(item);
+      } else if (typeof current === 'object') {
+        for (const key of Object.keys(current)) stack.push(current[key]);
+      }
+    }
+
+    return null;
+  }
+
   const canGenerate = useMemo(() => !!clothingFile && !!selectedModel && !loading, [clothingFile, selectedModel, loading]);
 
   function filePreview(file: File | null) {
@@ -92,15 +134,12 @@ export default function TryOn() {
         }
         console.log("📦 JSON response:", json);
 
-        // Try common fields that may contain the image
-        const possibleUrl: string | undefined = json?.imageUrl || json?.url || json?.image || json?.outputUrl;
-        const possibleBase64: string | undefined = json?.base64 || json?.imageBase64 || json?.data;
-
-        if (possibleUrl && typeof possibleUrl === 'string') {
-          setResultUrl(possibleUrl);
-        } else if (possibleBase64 && typeof possibleBase64 === 'string') {
-          // Strip data URL prefix if present
-          const base64 = possibleBase64.includes(',') ? possibleBase64.split(',')[1] : possibleBase64;
+        const extracted = extractImageFromJson(json);
+        if (extracted?.url) {
+          // If it's a data URL, just use it; if it's http(s), also ok
+          setResultUrl(extracted.url);
+        } else if (extracted?.base64) {
+          const base64 = extracted.base64.includes(',') ? extracted.base64.split(',')[1] : extracted.base64;
           const binary = atob(base64);
           const bytes = new Uint8Array(binary.length);
           for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
