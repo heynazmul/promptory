@@ -82,11 +82,14 @@ export default function TryOn() {
         if (blob.size === 0) throw new Error("Webhook returned an image with 0 bytes");
         setResultUrl(URL.createObjectURL(blob));
       } else if (contentType.includes("application/json")) {
-        const json: any = await res.json().catch(async () => {
-          // If JSON parse fails, try text
-          const txt = await res.text();
-          throw new Error(`Unexpected non-JSON body: ${txt.substring(0, 200)}`);
-        });
+        // Read once as text to avoid double-reading the response stream
+        const rawText = await res.text();
+        let json: any;
+        try {
+          json = rawText ? JSON.parse(rawText) : {};
+        } catch (parseErr) {
+          throw new Error(`Unexpected non-JSON body: ${rawText.substring(0, 200)}`);
+        }
         console.log("📦 JSON response:", json);
 
         // Try common fields that may contain the image
