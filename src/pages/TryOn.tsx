@@ -48,6 +48,10 @@ export default function TryOn() {
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         body: form,
+        headers: {
+          // Let the server know we can handle either an image blob or JSON metadata
+          Accept: 'image/*,application/json;q=0.9,*/*;q=0.8',
+        },
         // Don't set Content-Type header - browser will set it automatically with boundary
       });
 
@@ -61,19 +65,54 @@ export default function TryOn() {
         throw new Error(`Workflow failed (${res.status}): ${errorText.substring(0, 200)}`);
       }
 
-      // Handle binary image response
+      // Handle possible response types from the webhook
+      const contentLengthHeader = res.headers.get("content-length");
+      const contentLength = contentLengthHeader ? Number(contentLengthHeader) : undefined;
+
       if (contentType.startsWith("image/")) {
         const blob = await res.blob();
         console.log("🎨 Received image blob:", blob.size, "bytes");
+        if (blob.size === 0) throw new Error("Webhook returned an image with 0 bytes");
         setResultUrl(URL.createObjectURL(blob));
-      } else {
-        // Fallback: try to parse as binary
-        const blob = await res.blob();
-        if (blob.size > 0) {
-          console.log("🎨 Fallback: treating as image blob:", blob.size, "bytes");
+      } else if (contentType.includes("application/json")) {
+        const json: any = await res.json().catch(async () => {
+          // If JSON parse fails, try text
+          const txt = await res.text();
+          throw new Error(`Unexpected non-JSON body: ${txt.substring(0, 200)}`);
+        });
+        console.log("📦 JSON response:", json);
+
+        // Try common fields that may contain the image
+        const possibleUrl: string | undefined = json?.imageUrl || json?.url || json?.image || json?.outputUrl;
+        const possibleBase64: string | undefined = json?.base64 || json?.imageBase64 || json?.data;
+
+        if (possibleUrl && typeof possibleUrl === 'string') {
+          setResultUrl(possibleUrl);
+        } else if (possibleBase64 && typeof possibleBase64 === 'string') {
+          // Strip data URL prefix if present
+          const base64 = possibleBase64.includes(',') ? possibleBase64.split(',')[1] : possibleBase64;
+          const binary = atob(base64);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+          const blob = new Blob([bytes], { type: 'image/png' });
           setResultUrl(URL.createObjectURL(blob));
         } else {
-          throw new Error("Empty response from webhook");
+          throw new Error("JSON response did not include an image URL or base64 data");
+        }
+      } else {
+        // Unknown content type: try blob first
+        const blob = await res.blob();
+        if (blob.size > 0 && (contentType.startsWith("application/octet-stream") || !contentType)) {
+          console.log("🎨 Treating octet-stream/unknown as image blob:", blob.size, "bytes");
+          setResultUrl(URL.createObjectURL(blob));
+        } else if (blob.size > 0) {
+          // Not an image, show a snippet as error for diagnostics
+          const text = await blob.text();
+          throw new Error(`Unexpected content-type ${contentType}. Body: ${text.substring(0, 200)}`);
+        } else {
+          // Truly empty
+          const lenInfo = contentLength !== undefined ? `content-length=${contentLength}` : 'no content-length header';
+          throw new Error(`Empty response from webhook (${lenInfo}). Ensure your n8n node returns data.`);
         }
       }
 
